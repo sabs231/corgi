@@ -11,8 +11,6 @@ import (
   "gopkg.in/src-d/go-git.v4"
 )
 
-// GITHUB_TOKEN: f39035c4a93b4580abe9aaed1c8ca29bb5bdb98d
-
 var query struct {
   Viewer struct {
     Login githubv4.String
@@ -41,7 +39,7 @@ var repoQuery struct {
 func main() {
   const reposPath = "/tmp/wizecat/repos"
   // Begin: for authentication package
-  src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: "f39035c4a93b4580abe9aaed1c8ca29bb5bdb98d"})
+  src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")})
   httpClient := oauth2.NewClient(context.Background(), src)
   // End: for authentication package
 
