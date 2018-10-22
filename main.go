@@ -88,9 +88,9 @@ func main() {
   var cloned, notCloned , dockerFound, imageBuilt, errorBuilts int
   // Cloning of the repositories
   for i := 0; i <= len(allRepos) - 1; i++ {
-    // if i % 40 != 0 {
-    //   continue
-    // }
+    if i % 40 != 0 {
+      continue
+    }
     repo := allRepos[i].SshUrl
     tmpRepoPath := fmt.Sprintf("%s/%s", reposPath, allRepos[i].Name)
     // Cloning the repo in the temporary path
@@ -196,13 +196,18 @@ func main() {
       continue
     }
     logString := string(corgiSlice)
+    // TODO: find better ways to find substring of success and error
     if strings.Contains(logString, "errorDetail") {
       errorBuilts++
       fmt.Println("===========Image Build error===========")
       fmt.Println("Wrote CORGI log to: ", corgiLogFilePath)
+      // TODO SABS: make it match globally (multiple matches) maybe use FindAllStringSubmatch
+      re := regexp.MustCompile(`---\\u003e\s(\w*)\\n`)
+      match := re.FindStringSubmatch(logString)
+      fmt.Println("Error matched", match[1])
     }
     if strings.Contains(logString, "aux") {
-      re := regexp.MustCompile("sha256\\:(.*?)\"")
+      re := regexp.MustCompile(`sha256\:(\w*)\"`)
       match := re.FindStringSubmatch(logString)
       fmt.Println("===========Image ID===========")
       fmt.Println("CORGI log: ", corgiLogFilePath)
